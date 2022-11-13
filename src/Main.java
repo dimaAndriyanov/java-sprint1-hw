@@ -1,31 +1,39 @@
+//Привет, приятно познакомиться!
 import java.util.Scanner;
 
+// Класс содержит метод main, который является точкой входа в приложение
+// Отвечает за вывод меню приложения на экран и взаимодействие с пользователем
 public class Main {
     public static void main(String[] args) {
 
-        printMenu();
+        int userInput;
+        int dayNumber;
+        int monthNumber;
+        int steps;
+        String message;
         Scanner scanner = new Scanner(System.in);
-        int userInput = scanner.nextInt();
         StepTracker stepTracker = new StepTracker();
 
+        printMenu();
+        userInput = scanner.nextInt();
         while (userInput != 0) {
             if (userInput ==1) {
-                System.out.print("Введите номер месяца, в котором вы хотите внести количество пройденных шагов ");
-                int monthNumber = readMonthNumber(scanner);
-                System.out.print("Введите номер дня месяца, в котором вы хотите внести количество пройденных шагов ");
-                int dayNumber = readDayNumber(scanner);
-                System.out.print("Введите количество пройденных шагов ");
-                int steps = readSteps(scanner);
+                message = "Введите номер месяца, в котором вы хотите внести количество пройденных шагов";
+                monthNumber = readNumberInRange(scanner,message, 1, 12);
+                message = "Введите номер дня месяца, в котором вы хотите внести количество пройденных шагов";
+                dayNumber = readNumberInRange(scanner, message, 1, 30);
+                message = "Введите количество пройденных шагов";
+                steps = readNonNegativeNumber(scanner, message);
                 stepTracker.setStepsOnDate(monthNumber, dayNumber, steps);
             } else if (userInput ==2) {
-                System.out.print("Введите номер месяца, за который вы хотите увидеть статистику ");
-                int monthNumber = readMonthNumber(scanner);
+                message = "Введите номер месяца, за который вы хотите увидеть статистику";
+                monthNumber = readNumberInRange(scanner, message, 1, 12);
                 stepTracker.showStatisticsOnMonth(monthNumber);
             } else if (userInput ==3) {
-                System.out.print("Введите новую цель по количеству шагов за день ");
-                int steps = readSteps(scanner);
+                message = "Введите новую цель по количеству шагов за день";
+                steps = readNonNegativeNumber(scanner, message);
                 stepTracker.setStepsGoal(steps);
-            } else System.out.println("Неверный ввод, попробуйте снова");
+            } else System.out.println("Неверный ввод: такого пункта в меню нет. Попробуйте снова");
             printMenu();
             userInput = scanner.nextInt();
         }
@@ -41,54 +49,39 @@ public class Main {
         System.out.print("Введите номер команды ");
     }
 
-    // считывает номер месяца из командной строки, исключает ошибки пользователя
-    public static int readMonthNumber(Scanner scanner) {
-        int monthNumber;
+    // выводит на экран сообщение message и считывает целое число в интервале от leftBorder до rightBorder включительно
+    public static int readNumberInRange(Scanner scanner, String message, int leftBorder, int rightBorder) {
+        System.out.print(message + " ");
+        int input;
         while (true) {
-            monthNumber = scanner.nextInt();
-            if (monthNumber > 0) {
-                if (monthNumber < 13) {
-                    return monthNumber;
+            input = scanner.nextInt();
+            if (input >= leftBorder) {
+                if (input <= rightBorder) {
+                    return input;
                 } else {
-                    System.out.println("Неверный ввод, попробуйте снова");
-                    System.out.print("Введите номер месяца, в котором вы хотите внести количество пройденных шагов ");
+                    System.out.println("Неверный ввод: введенное число не должно превышать " + rightBorder +
+                            ". Попробуйте снова");
+                    System.out.print(message + " ");
                 }
             } else {
-                System.out.println("Неверный ввод, попробуйте снова");
-                System.out.print("Введите номер месяца, в котором вы хотите внести количество пройденных шагов ");
+                System.out.println("Неверный ввод: введенное число не должно быть меньше " + leftBorder +
+                        ". Попробуйте снова");
+                System.out.print(message + " ");
             }
         }
     }
 
-    // считывает номер дня из командной строки, исключает ошибки пользователя
-    public static int readDayNumber(Scanner scanner) {
-        int dayNumber;
+    // выводит на экран сообщение message и считывает неотрицательное целое число
+    public static int readNonNegativeNumber(Scanner scanner, String message) {
+        System.out.print(message + " ");
+        int input;
         while (true) {
-            dayNumber = scanner.nextInt();
-            if (dayNumber > 0) {
-                if (dayNumber < 31) {
-                    return dayNumber;
-                } else {
-                    System.out.println("Неверный ввод, попробуйте снова");
-                    System.out.print("Введите номер дня месяца, в котором вы хотите внести количество пройденных шагов ");
-                }
+            input = scanner.nextInt();
+            if (input > -1) {
+                return input;
             } else {
-                System.out.println("Неверный ввод, попробуйте снова");
-                System.out.print("Введите номер дня месяца, в котором вы хотите внести количество пройденных шагов ");
-            }
-        }
-    }
-
-    // считывает количество шагов из командной строки, исключает ошибки пользователя
-    public static int readSteps (Scanner scanner) {
-        int steps;
-        while (true) {
-            steps = scanner.nextInt();
-            if (steps > -1) {
-                return steps;
-            } else {
-                System.out.println("Неверный ввод, попробуйте снова");
-                System.out.print("Введите количество пройденных шагов ");
+                System.out.println("Неверный ввод: введенное число должно быть неотрицательным. Попробуйте снова");
+                System.out.print(message + " ");
             }
         }
     }

@@ -1,36 +1,53 @@
 //Хранит и обрабатывает данные одного месяца
 public class MonthData {
 
-    int[] steps = new int[30]; //хранит количество пройденных шагов в каждый день
-    int stepsSum = 0; //хранит суммарное количество шагов, пройденных за месяц
-    int maxSteps = 0; //хранит максимальное количество шагов, пройденных за один день
-    int dayWithMaxSteps = 0; // хранит день, в который пройдено максимальное количество шагов
+    int[] days = new int[30]; //хранит количество пройденных шагов в каждый день
 
     public MonthData() {
-        for (int i = 0; i < steps.length; i++) steps[i] = 0;
+        for (int i = 0; i < days.length; i++) days[i] = 0;
     }
 
     // сохраняет новое количество пройденных шагов newSteps в день номер dayNumber
     public void setStepsOnDay (int dayNumber, int newSteps) {
-        stepsSum = stepsSum - steps[dayNumber -1];
-        steps[dayNumber-1] = newSteps;
-        stepsSum = stepsSum + newSteps;
-        if (maxSteps < newSteps) {
-            maxSteps = newSteps;
-            dayWithMaxSteps = dayNumber;
-        }
+        days[dayNumber-1] = newSteps;
     }
 
     // выводит на экран статистику за месяц. stepsGoal - целевое количество шагов, которые необходимо пройти за один день
     public void printMonthData(int stepsGoal) {
+        int stepsSum = getStepsSum();
+        int[] maxStepsAndCorrespondingDay = getMaxStepsAndCorrespondingDay();
         printAllSteps();
-        printStepsSum();
-        printMaxSteps();
-        printAverageSteps();
+        printStepsSum(stepsSum);
+        printMaxSteps(maxStepsAndCorrespondingDay[0], maxStepsAndCorrespondingDay[1]);
+        printAverageSteps(stepsSum);
         Converter converter = new Converter();
         System.out.println("Всего пройдено за месяц " + converter.convertToKm(stepsSum) + " километров");
         System.out.println("Всего сожжено за месяц " + converter.convertToKcal(stepsSum) + " килокалорий");
         printLongestGoalStreak(stepsGoal);
+    }
+
+    // возвращает суммарное количество пройденных шагов
+    public int getStepsSum() {
+        int stepsSum = 0;
+        for (int i = 0; i < days.length; i++) {
+            stepsSum = stepsSum + days[i];
+        }
+        return stepsSum;
+    }
+
+    // возвращает массив из двух элементов, содержащий максимальное количество шагов, пройденных за один день
+    // и соответствующий день
+    public int[] getMaxStepsAndCorrespondingDay() {
+        int maxSteps = 0;
+        int dayWithMaxSteps = 0;
+        for (int i = 0; i < days.length; i++) {
+            if (maxSteps < days[i]) {
+                maxSteps = days[i];
+                dayWithMaxSteps = i + 1;
+            }
+        }
+        int[] maxStepsAndCorrespondingDay = {maxSteps, dayWithMaxSteps};
+        return maxStepsAndCorrespondingDay;
     }
 
     // выводит на экран количество пройденных шагов по дням
@@ -38,21 +55,21 @@ public class MonthData {
         System.out.println("Количество пройденных шагов по дням");
         for (int i = 0; i < 6; i++) {
             for (int j = 1; j< 6; j++) {
-                System.out.print((i * 5 + j) + "-й день: " + steps[i * 5 + j - 1] + ", ");
+                System.out.print((i * 5 + j) + "-й день: " + days[i * 5 + j - 1] + ", ");
             }
             System.out.println("");
         }
     }
 
-    // выводит на экран суммарное количество шагов, пройденных за день
-    public void printStepsSum() {
+    // выводит на экран суммарное количество шагов stepsSum, пройденных за месяц
+    public void printStepsSum(int stepsSum) {
         System.out.print("Всего пройдено " + stepsSum);
         printWordSteps(stepsSum);
         System.out.println("");
     }
 
-    //выводит на экран максимальное количество шагов пройденных за один день и номер этого дня
-    public void printMaxSteps() {
+    //выводит на экран максимальное количество шагов пройденных за один день maxSteps и номер этого дня dayWithMaxSteps
+    public void printMaxSteps(int maxSteps, int dayWithMaxSteps) {
         if (maxSteps == 0) {
             System.out.println("Ни в один из дней не пройдено ни одного шага");
             return;
@@ -67,7 +84,7 @@ public class MonthData {
     }
 
     // выводит на экран среднее количество шагоф пройденых за день в течение месяца
-    public void printAverageSteps() {
+    public void printAverageSteps(int stepsSum) {
         System.out.println("В среднем пройдено " + stepsSum / 30.0 + " шагов в день.");
     }
 
@@ -78,13 +95,13 @@ public class MonthData {
         int streakDuration = 0;
         int firstDay = 0;
         int counter = 0;
-        for (int i = 0; i < steps.length; i++) {
-            if (stepsGoal <= steps[i]) {
+        for (int i = 0; i < days.length; i++) {
+            if (stepsGoal <= days[i]) {
                 if (counter == 0) {
                     firstDay = i + 1;
                 }
                 counter++;
-                if (i == steps.length - 1) {
+                if (i == days.length - 1) {
                     if (counter > streakDuration) {
                         streakDuration = counter;
                         firstDayOfStreak = firstDay;

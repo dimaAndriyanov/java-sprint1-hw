@@ -1,4 +1,3 @@
-//Привет, приятно познакомиться!
 import java.util.Scanner;
 
 // Класс содержит метод main, который является точкой входа в приложение
@@ -14,28 +13,26 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         StepTracker stepTracker = new StepTracker();
 
-        printMenu();
-        userInput = scanner.nextInt();
+        userInput = getUserResponseForMenu(scanner);
         while (userInput != 0) {
-            if (userInput ==1) {
+            if (userInput == 1) {
                 message = "Введите номер месяца, в котором вы хотите внести количество пройденных шагов";
-                monthNumber = readNumberInRange(scanner,message, 1, 12);
+                monthNumber = readNumberInRange(scanner, message, 1, 12);
                 message = "Введите номер дня месяца, в котором вы хотите внести количество пройденных шагов";
                 dayNumber = readNumberInRange(scanner, message, 1, 30);
                 message = "Введите количество пройденных шагов";
                 steps = readNonNegativeNumber(scanner, message);
                 stepTracker.setStepsOnDate(monthNumber, dayNumber, steps);
-            } else if (userInput ==2) {
+            } else if (userInput == 2) {
                 message = "Введите номер месяца, за который вы хотите увидеть статистику";
                 monthNumber = readNumberInRange(scanner, message, 1, 12);
                 stepTracker.showStatisticsOnMonth(monthNumber);
-            } else if (userInput ==3) {
+            } else if (userInput == 3) {
                 message = "Введите новую цель по количеству шагов за день";
                 steps = readNonNegativeNumber(scanner, message);
                 stepTracker.setStepsGoal(steps);
             } else System.out.println("Неверный ввод: такого пункта в меню нет. Попробуйте снова");
-            printMenu();
-            userInput = scanner.nextInt();
+            userInput = getUserResponseForMenu(scanner);
         }
     }
 
@@ -46,42 +43,50 @@ public class Main {
         System.out.println("2. Напечатать статистику за определенный месяц");
         System.out.println("3. Изменить цель по количеству шагов за день");
         System.out.println("0. Выход");
-        System.out.print("Введите номер команды ");
+    }
+
+    // выводит на экран меню и считывает целое число, введенное пользователем
+    public static int getUserResponseForMenu(Scanner scanner){
+        printMenu();
+        int userInput = getUserInputInt(scanner, "Введите номер команды");
+        return userInput;
+    }
+
+    // выводит сообщение message на экран и считывает целое число, введенное пользователем
+    public static int getUserInputInt(Scanner scanner, String message) {
+        System.out.print(message + " ");
+        int userInput = scanner.nextInt();
+        return userInput;
     }
 
     // выводит на экран сообщение message и считывает целое число в интервале от leftBorder до rightBorder включительно
     public static int readNumberInRange(Scanner scanner, String message, int leftBorder, int rightBorder) {
-        System.out.print(message + " ");
         int input;
         while (true) {
-            input = scanner.nextInt();
+            input = getUserInputInt(scanner, message);
             if (input >= leftBorder) {
                 if (input <= rightBorder) {
                     return input;
                 } else {
                     System.out.println("Неверный ввод: введенное число не должно превышать " + rightBorder +
                             ". Попробуйте снова");
-                    System.out.print(message + " ");
                 }
             } else {
                 System.out.println("Неверный ввод: введенное число не должно быть меньше " + leftBorder +
                         ". Попробуйте снова");
-                System.out.print(message + " ");
             }
         }
     }
 
     // выводит на экран сообщение message и считывает неотрицательное целое число
     public static int readNonNegativeNumber(Scanner scanner, String message) {
-        System.out.print(message + " ");
         int input;
         while (true) {
-            input = scanner.nextInt();
+            input = getUserInputInt(scanner, message);
             if (input > -1) {
                 return input;
             } else {
                 System.out.println("Неверный ввод: введенное число должно быть неотрицательным. Попробуйте снова");
-                System.out.print(message + " ");
             }
         }
     }
